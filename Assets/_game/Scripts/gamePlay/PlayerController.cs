@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Photon.Pun;
 
 public class PlayerController : MonoBehaviour
 {
-
+    public PhotonView photonView;
     private GameObject currentProjectile;
     public GameObject basicProjectile;
     public GameObject ProjectileM;
@@ -12,7 +13,7 @@ public class PlayerController : MonoBehaviour
     public GameObject ProjectileL;
 
 
-    private BoxCollider2D myColl;
+    public BoxCollider2D myColl;
 
     public static int rapidsPicked = 0;
     public static float projectileSpeedKoeff = 2;
@@ -67,7 +68,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 topLeft;
     private Vector2 topRight;
 
-    private Animator[] animators;
+    public Animator[] animators;
 
     private bool isActive;
     private bool isDead;
@@ -78,17 +79,25 @@ public class PlayerController : MonoBehaviour
     public GameObject SpawnPoint;
     private int flashing = 0;
     public GameObject DeathEffect;
+    public SpriteRenderer[] sprites;
 
-    void Start()
+
+    private void Start()
     {
-        transform.position = SpawnPoint.transform.position;
+        SpawnPoint = IngameManager.ins.spawnPoint.gameObject;
+        transform.position = SpawnPoint.transform.position + Random.Range(-1f, 1f) * Vector3.right;
         currentProjectile = basicProjectile;
-        animators = GetComponentsInChildren<Animator>();
         shootDelayCounter = 0;
         rot = new Quaternion(0, 0, 0, 0);
-        myColl = GetComponent<BoxCollider2D>();
         originColliderSize = myColl.size.y;
         originColliderOffset = myColl.offset.y;
+
+        IngameManager.ins.players.Add(this);
+
+        // if(PhotonNetwork.IsMasterClient)
+        // {
+            // Debug.LogError("PhotonNetwork.IsMasterClient: " + PhotonNetwork.IsMasterClient);
+        // }
     }
 
 
@@ -105,18 +114,20 @@ public class PlayerController : MonoBehaviour
     // Смерть
     public void Death()
     {
-        if (KeyDown && onWater) return;
-        if (invincCounter > 0) return;
-        Instantiate(DeathEffect, transform.position, transform.rotation);
-        transform.position = SpawnPoint.transform.position;        
-        isDead = true;
-        isActive = false;
-        inactCounter = inactivityTime;
+        if(photonView.IsMine)
+        {
+            if (KeyDown && onWater) return;
+            if (invincCounter > 0) return;
+            PhotonNetwork.Instantiate("Game/" + DeathEffect.name, transform.position, transform.rotation);
+            transform.position = SpawnPoint.transform.position;        
+            isDead = true;
+            isActive = false;
+            inactCounter = inactivityTime;
+        }
     }
 
-    void Update()
+    private void Update()
     {
-
         if (!isActive)
         {
             inactCounter -= Time.deltaTime;
@@ -127,26 +138,24 @@ public class PlayerController : MonoBehaviour
             }
             return;
         }
-
-        
-
-
         CalculateBounds();
-        onGround =
-            CheckCollision(botLeft, Vector2.down, pixelSize, solid) ||
-            CheckCollision(botRight, Vector2.down, pixelSize, solid) ||
-            CheckCollision(botLeft, Vector2.down, pixelSize, oneway) ||
-            CheckCollision(botRight, Vector2.down, pixelSize, oneway);
+
+        if(photonView.IsMine)
+        {
+            onGround =
+                CheckCollision(botLeft, Vector2.down, pixelSize, solid) ||
+                CheckCollision(botRight, Vector2.down, pixelSize, solid) ||
+                CheckCollision(botLeft, Vector2.down, pixelSize, oneway) ||
+                CheckCollision(botRight, Vector2.down, pixelSize, oneway);
+            onPlatform =
+                CheckCollision(botLeft, Vector2.down, pixelSize, oneway) ||
+                CheckCollision(botRight, Vector2.down, pixelSize, oneway);
+
+        }
         onWater =
             CheckCollision(botLeft, Vector2.down, pixelSize, water) ||
             CheckCollision(botRight, Vector2.down, pixelSize, water);
-        onPlatform =
-            CheckCollision(botLeft, Vector2.down, pixelSize, oneway) ||
-            CheckCollision(botRight, Vector2.down, pixelSize, oneway);
 
-
-
-        SpriteRenderer[] sprites = GetComponentsInChildren<SpriteRenderer>();
         if (invincCounter > 0)
         {
             invincCounter -= Time.deltaTime;
@@ -155,10 +164,10 @@ public class PlayerController : MonoBehaviour
             {
                 for (int i = 0; i < sprites.Length; i++)
                 {
-                    sprites[i].GetComponent<SpriteRenderer>().enabled = !sprites[i].GetComponent<SpriteRenderer>().enabled;
-                    if (i == 2 && onWater) sprites[2].GetComponent<SpriteRenderer>().enabled = false;
-                    if (i == 3 && !onWater) sprites[3].GetComponent<SpriteRenderer>().enabled = false;
-                    if (i == 3 && onWater) sprites[3].GetComponent<SpriteRenderer>().enabled = enabled;
+                    sprites[i].enabled = !sprites[i].enabled;
+                    if (i == 2 && onWater) sprites[2].enabled = false;
+                    if (i == 3 && !onWater) sprites[3].enabled = false;
+                    if (i == 3 && onWater) sprites[3].enabled = enabled;
                 }
                 flashing = 0;
             }
@@ -167,43 +176,43 @@ public class PlayerController : MonoBehaviour
         {
             for (int i = 0; i < sprites.Length; i++)
             {
-                sprites[i].GetComponent<SpriteRenderer>().enabled = true;
-                if (i == 2 && onWater) sprites[2].GetComponent<SpriteRenderer>().enabled = false;
-                if (i == 2 && !onWater) sprites[2].GetComponent<SpriteRenderer>().enabled = true;
-                if (i == 3 && !onWater) sprites[3].GetComponent<SpriteRenderer>().enabled = false;
-                if (i == 3 && onWater) sprites[3].GetComponent<SpriteRenderer>().enabled = enabled;
+                sprites[i].enabled = true;
+                if (i == 2 && onWater) sprites[2].enabled = false;
+                if (i == 2 && !onWater) sprites[2].enabled = true;
+                if (i == 3 && !onWater) sprites[3].enabled = false;
+                if (i == 3 && onWater) sprites[3].enabled = enabled;
             }
             flashing = 0;
         }
 
 
-
-        obsticleOnRight = CheckCollision(topRight, Vector2.right, pixelSize, solid) || CheckCollision(botRight, Vector2.right, pixelSize, solid);
-        obsticleOnLeft = CheckCollision(topLeft, Vector2.left, pixelSize, solid) || CheckCollision(botLeft, Vector2.left, pixelSize, solid);
-
-        GetInput();
-
-        if (onGround && KeyDown)
+        if(photonView.IsMine)
         {
-            myColl.size = new Vector2(myColl.size.x, duckColliderSize);
-            myColl.offset = new Vector2(myColl.offset.x, duckColliderOffset);
-        }
-        else
-        {
-            myColl.size = new Vector2(myColl.size.x, originColliderSize);
-            myColl.offset = new Vector2(myColl.offset.x, originColliderOffset);
+            obsticleOnRight = CheckCollision(topRight, Vector2.right, pixelSize, solid) || CheckCollision(botRight, Vector2.right, pixelSize, solid);
+            obsticleOnLeft = CheckCollision(topLeft, Vector2.left, pixelSize, solid) || CheckCollision(botLeft, Vector2.left, pixelSize, solid);
+            GetInput();
+            if (onGround && KeyDown)
+            {
+                myColl.size = new Vector2(myColl.size.x, duckColliderSize);
+                myColl.offset = new Vector2(myColl.offset.x, duckColliderOffset);
+            }
+            else
+            {
+                myColl.size = new Vector2(myColl.size.x, originColliderSize);
+                myColl.offset = new Vector2(myColl.offset.x, originColliderOffset);
 
+            }
+        
+            CalculateDirection();
+            CalculateShootAngles();
+            CalculateShootPoint();
+            Move();
+            Shoot();
+            Animate();
         }
-
-        CalculateDirection();
-        CalculateShootAngles();
-        CalculateShootPoint();
-        Animate();
-        Move();
-        Shoot();
     }
 
-    void GetInput()
+    private void GetInput()
     {
         KeyLeft = Input.GetKey(KeyCode.LeftArrow);
         KeyRight = Input.GetKey(KeyCode.RightArrow);
@@ -214,7 +223,7 @@ public class PlayerController : MonoBehaviour
         KeyJumpOff = KeyDown && KeyJump;
     }
 
-    void Move()
+    private void Move()
     {
         if (KeyLeft && !obsticleOnLeft)
         {
@@ -321,42 +330,37 @@ public class PlayerController : MonoBehaviour
         {
             if ((currentProjectile == basicProjectile) )
             {
-                Instantiate(currentProjectile, currentShootPoint.position, rot);
+                SpawnBullet();
                 shootDelayCounter = shootDelay;
             }
-            if (currentProjectile == ProjectileM)
+            else if (currentProjectile == ProjectileM)
             {
-                Instantiate(currentProjectile, currentShootPoint.position, rot);
+                SpawnBullet();
                 shootDelayCounter = shootDelay;
             }
-            if ((currentProjectile == ProjectileF) )
+            else if ((currentProjectile == ProjectileF) )
             {
-                Instantiate(currentProjectile, currentShootPoint.position, rot);
+                SpawnBullet();
                 shootDelayCounter = shootDelay;
             }
-            if ((currentProjectile == ProjectileS) )
+            else if ((currentProjectile == ProjectileS) )
             {
-                Instantiate(currentProjectile, currentShootPoint.position, rot);
+                SpawnBullet();
                 shootDelayCounter = shootDelay;
             }
-            if (currentProjectile == ProjectileL)
+            else if (currentProjectile == ProjectileL)
             {
-                // Projectile[] projectile = FindObjectsOfType<Projectile>();
-                // foreach (Projectile p in projectile)
-                // {
-                //     Destroy(p.gameObject);
-                // }
-                // ProjectileLaserShell[] shells = FindObjectsOfType<ProjectileLaserShell>();
-                // foreach (ProjectileLaserShell s in shells)
-                // {
-                //     Destroy(s.gameObject);
-                // }
-                Instantiate(currentProjectile, currentShootPoint.position, rot);
+                SpawnBullet();
                 shootDelayCounter = shootDelay;
             }
 
         }
         shootDelayCounter -= Time.deltaTime;
+    }
+
+    private void SpawnBullet()
+    {
+        PhotonNetwork.Instantiate("Game/" + basicProjectile.name, currentShootPoint.position, rot);
     }
 
     // Рассчитать направление
@@ -385,7 +389,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Вычислить точку для стрельбы
-    void CalculateShootPoint()
+    private void CalculateShootPoint()
     {
         if (onGround && direction == 8) currentShootPoint = shootPoints[0];
         if (!jumped && (direction == 9 || direction == 7)) currentShootPoint = shootPoints[1];
@@ -397,7 +401,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Рассчитать углы стрельбы
-    void CalculateShootAngles()
+    private void CalculateShootAngles()
     {
         if (direction == 8) rot = Quaternion.Euler(transform.rotation.x, transform.rotation.y, shootAngles[0]);
         if (direction == 9) rot = Quaternion.Euler(transform.rotation.x, transform.rotation.y, -shootAngles[1]);
@@ -432,9 +436,10 @@ public class PlayerController : MonoBehaviour
     }
 
     // пересчитать углы
+    Bounds b;
     private void CalculateBounds()
     {
-        Bounds b = GetComponent<BoxCollider2D>().bounds;
+        b = myColl.bounds;
         topLeft = new Vector2(b.min.x, b.max.y);
         botLeft = new Vector2(b.min.x, b.min.y);
         topRight = new Vector2(b.max.x, b.max.y);
@@ -446,14 +451,13 @@ public class PlayerController : MonoBehaviour
     {
         for (int i = 0; i < 2; i++)
         {
-            animators[i].SetBool("OnGround", onGround);
-            animators[i].SetBool("Jumped", jumped);
-            animators[i].SetBool("Moving", moving);
-            animators[i].SetBool("Shooting", KeyAction);
-            animators[i].SetBool("KeyDown", KeyDown);
-            animators[i].SetFloat("VSP", vsp);
-            animators[i].SetInteger("Direction", direction);
-
+            animators[i].SetBool(Constant.anim_OnGround, onGround);
+            animators[i].SetBool(Constant.anim_Jumped, jumped);
+            animators[i].SetBool(Constant.anim_Moving, moving);
+            animators[i].SetBool(Constant.anim_Shooting, KeyAction);
+            animators[i].SetBool(Constant.anim_KeyDown, KeyDown);
+            animators[i].SetFloat(Constant.anim_VSP, vsp);
+            animators[i].SetInteger(Constant.anim_Direction, direction);
         }
     }
 

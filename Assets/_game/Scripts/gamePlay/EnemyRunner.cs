@@ -11,8 +11,8 @@ public class EnemyRunner : MonoBehaviour {
 
     public LayerMask ground;
 
-    private Rigidbody2D myBody;
-    private Animator myAnimator;
+    public Rigidbody2D myBody;
+    public Animator myAnimator;
 
     public float moveSpeed;
     public float jumpHeight;
@@ -22,10 +22,10 @@ public class EnemyRunner : MonoBehaviour {
     bool isActive;
 
     // Use this for initialization
-    void Start () {
-        myBody = GetComponent<Rigidbody2D>();
-        myAnimator = GetComponent<Animator>();
-	}
+    // void Start () {
+    //     myBody = GetComponent<Rigidbody2D>();
+    //     myAnimator = GetComponent<Animator>();
+	// }
 
     void OnBecameVisible()
     {
@@ -33,7 +33,8 @@ public class EnemyRunner : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+    {
         if (!isActive) return;
         onGround = Physics2D.OverlapCircle(groundSensor.position, 0.1f, ground);    // На земле ли
         cliffAhead = !Physics2D.OverlapCircle(cliffSensor.position, 0.1f, ground);  // есть ли впереди обрыв
@@ -50,11 +51,11 @@ public class EnemyRunner : MonoBehaviour {
         
         // Двигаться
         myBody.velocity = new Vector2(moveSpeed * transform.localScale.x, myBody.velocity.y);
-        myAnimator.SetBool("OnGround", onGround);
+        myAnimator.SetBool(Constant.anim_OnGround, onGround);
     }
 
     // реакция на обрыв
-    void ReactToCliff(float r)
+    private void ReactToCliff(float r)
     {
         if(r == 0)  // Прыгнуть
         {

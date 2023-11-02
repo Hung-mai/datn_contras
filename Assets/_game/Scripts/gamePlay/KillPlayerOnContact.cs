@@ -1,18 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Photon.Pun;
 
 public class KillPlayerOnContact : MonoBehaviour {
 
     public bool killSelf;
     public bool KillRegardless;
 
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.tag == Constant.TAG_PLAYER)
         {
-            if(KillRegardless) FindObjectOfType<PlayerController>().invincCounter = -1;
-            FindObjectOfType<PlayerController>().Death();
-            if (killSelf) Destroy(gameObject);
+            PlayerController pController = other.GetComponent<PlayerController>();
+            if(KillRegardless) pController.invincCounter = -1;
+            pController.Death();
+            if (killSelf) PhotonNetwork.Destroy(gameObject);
         }
 
     }

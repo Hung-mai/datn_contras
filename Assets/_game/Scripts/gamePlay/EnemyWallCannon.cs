@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class EnemyWallCannon : MonoBehaviour {
 
-    private AngleChecker angler;
+    public AngleChecker angler;
 
     public float shootDelay = 1.5f;
     private float shootDelayCounter;
@@ -20,14 +21,15 @@ public class EnemyWallCannon : MonoBehaviour {
 
     private bool isActive = false;
 
-    void Start()
+    private void Start()
     {
-        angler = GetComponent<AngleChecker>();
+        // angler = GetComponent<AngleChecker>();
         delayCounter = delay;
     }
 
 	// Update is called once per frame
-	void Update () {
+	private void Update()
+    {
 
         if (!isActive) return;
         
@@ -77,7 +79,7 @@ public class EnemyWallCannon : MonoBehaviour {
     {
         if (shootDelayCounter <= 0)
         {
-            Instantiate(projectile, dulo.transform.position, transform.rotation);
+            PhotonNetwork.Instantiate("Enemy/" + projectile.name, dulo.transform.position, transform.rotation);
             shootDelayCounter = shootDelay;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Photon.Pun;
 
 public class EnemyManager : MonoBehaviour {
 
@@ -11,7 +12,7 @@ public class EnemyManager : MonoBehaviour {
     public GameObject deathEffectSecond;
 
     // Use this for initialization
-    void Start () {
+    private void Start () {
         invinsible = false;
         currentHealth = health;
 	}
@@ -33,12 +34,14 @@ public class EnemyManager : MonoBehaviour {
     {
         if (deathEffectFirst != null)
         {
-            Instantiate(deathEffectFirst, transform.position, transform.rotation);
+            // Instantiate(deathEffectFirst, transform.position, transform.rotation);
+            PhotonNetwork.Instantiate("Enemy/" + deathEffectFirst.name, transform.position, transform.rotation);
         }
         if (deathEffectSecond != null)
         {
-            Instantiate(deathEffectSecond, transform.position, transform.rotation);
+            // Instantiate(deathEffectSecond, transform.position, transform.rotation);
+            PhotonNetwork.Instantiate("Enemy/" + deathEffectSecond.name, transform.position, transform.rotation);
         }
-        Destroy(gameObject);
+        PhotonNetwork.Destroy(gameObject);
     }
 }

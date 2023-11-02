@@ -5,11 +5,12 @@ public class PlayerDeathEffect : MonoBehaviour {
 
 	public float impulseX;
     public float impulseY;
+    public Rigidbody2D myRigidbody;
 
     void Start()
     {
-        Rigidbody2D myRigidbody = GetComponent<Rigidbody2D>();
-        transform.localScale = FindObjectOfType<PlayerController>().transform.localScale;
+        // Rigidbody2D myRigidbody = GetComponent<Rigidbody2D>();
+        // transform.localScale = FindObjectOfType<PlayerController>().transform.localScale;
 
         if(transform.localScale.x > 0)
         {

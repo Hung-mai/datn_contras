@@ -11,10 +11,10 @@ public class ChangeScene : Editor {
         OpenScene("Loading");
     }
 
-    [MenuItem("Open Scene/Home #2")]
+    [MenuItem("Open Scene/Lobby #2")]
     public static void OpenHome()
     {
-        OpenScene("Home");
+        OpenScene("Lobby");
     }
     [MenuItem("Open Scene/HomeSnow #3")]
     public static void OpenHomeSnow()
