@@ -2,9 +2,11 @@
 using System.Collections;
 using Photon.Pun;
 
+
 public class DestroyObjectOverTime : MonoBehaviour {
 
     public float timeToDie;
+    public PhotonView photonView;
     
 	// void Update () {
     //     if (timeToDie <= 0)
@@ -16,12 +18,20 @@ public class DestroyObjectOverTime : MonoBehaviour {
 
     private void Start()
     {
+        photonView = GetComponent<PhotonView>();
         StartCoroutine(waitToDestroy());
     }
 
     private IEnumerator waitToDestroy()
     {
         yield return Cache.GetWFS(timeToDie);
-        PhotonNetwork.Destroy(gameObject);
+        if(photonView != null)
+        {
+            PhotonNetwork.Destroy(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }

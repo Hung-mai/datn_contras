@@ -12,14 +12,14 @@ public class Bridge : MonoBehaviour
     int i;
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         counter = 0;
         blocks = GetComponentsInChildren<EdgeCollider2D>();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (!blowing) return;
         if(counter <= 0)
@@ -35,8 +35,8 @@ public class Bridge : MonoBehaviour
         if (i == blocks.Length) Destroy(gameObject);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "Player") blowing = true;
+        if(other.tag == Constant.TAG_PLAYER) blowing = true;
     }
 }

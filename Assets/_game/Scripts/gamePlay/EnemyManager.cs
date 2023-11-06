@@ -11,13 +11,12 @@ public class EnemyManager : MonoBehaviour {
     public GameObject deathEffectFirst;
     public GameObject deathEffectSecond;
 
-    // Use this for initialization
-    private void Start () {
+    private void Start ()
+    {
         invinsible = false;
         currentHealth = health;
 	}
 	
-    // Получить урон
     public void TakeDamage()
     {
         if (invinsible) return;
@@ -35,13 +34,13 @@ public class EnemyManager : MonoBehaviour {
         if (deathEffectFirst != null)
         {
             // Instantiate(deathEffectFirst, transform.position, transform.rotation);
-            PhotonNetwork.Instantiate("Enemy/" + deathEffectFirst.name, transform.position, transform.rotation);
+            Instantiate(deathEffectFirst, transform.position, transform.rotation);
         }
         if (deathEffectSecond != null)
         {
             // Instantiate(deathEffectSecond, transform.position, transform.rotation);
-            PhotonNetwork.Instantiate("Enemy/" + deathEffectSecond.name, transform.position, transform.rotation);
+            Instantiate(deathEffectSecond, transform.position, transform.rotation);
         }
-        PhotonNetwork.Destroy(gameObject);
+        Destroy(gameObject);
     }
 }

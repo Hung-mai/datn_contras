@@ -9,20 +9,23 @@ public class FlyingBarrel : MonoBehaviour {
 
     public float amplitude = 1;
     public float frequency = 1;
+    private Rigidbody2D _rigidbody2D;
 
     // Use this for initialization
-    void Start () {
+    private void Start ()
+    {
+        _rigidbody2D = GetComponent<Rigidbody2D>();
         y = transform.position.y;
-        
     }
 	
     public void Activate()
     {
-        GetComponent<Rigidbody2D>().AddRelativeForce(Vector2.right * movespeed, ForceMode2D.Impulse);
+        _rigidbody2D.AddRelativeForce(Vector2.right * movespeed, ForceMode2D.Impulse);
     }
 
 	// Update is called once per frame
-	void Update () {
+	private void Update ()
+    {
         transform.position = new Vector3(transform.position.x, y + amplitude * Mathf.Sin(transform.position.x * frequency));
 	}
 }

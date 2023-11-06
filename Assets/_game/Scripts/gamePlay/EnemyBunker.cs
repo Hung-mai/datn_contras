@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class EnemyBunker : MonoBehaviour {
 
@@ -20,14 +21,13 @@ public class EnemyBunker : MonoBehaviour {
 
     private bool isActive = false;
 
-    void Start()
+    private void Start()
     {
         angler = GetComponent<AngleChecker>();
         delayCounter = delay;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
 
         if (!isActive) return;
@@ -59,21 +59,21 @@ public class EnemyBunker : MonoBehaviour {
         shootDelayCounter -= Time.deltaTime;
     }
 
-    void Shoot()
+    private void Shoot()
     {
         if (shootDelayCounter <= 0)
         {
-            Instantiate(projectile, dulo.transform.position, transform.rotation);
+            PhotonNetwork.Instantiate("Enemy/" + projectile.name, dulo.transform.position, transform.rotation);
             shootDelayCounter = shootDelay;
         }
     }
 
-    void OnBecameVisible()
+    private void OnBecameVisible()
     {
         isActive = true;
     }
 
-    void OnBecameInvisible()
+    private void OnBecameInvisible()
     {
         isActive = false;
     }

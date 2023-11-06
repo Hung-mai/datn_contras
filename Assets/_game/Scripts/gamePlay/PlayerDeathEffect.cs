@@ -7,7 +7,7 @@ public class PlayerDeathEffect : MonoBehaviour {
     public float impulseY;
     public Rigidbody2D myRigidbody;
 
-    void Start()
+    private void Start()
     {
         // Rigidbody2D myRigidbody = GetComponent<Rigidbody2D>();
         // transform.localScale = FindObjectOfType<PlayerController>().transform.localScale;

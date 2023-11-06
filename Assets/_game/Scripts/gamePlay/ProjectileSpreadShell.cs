@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Photon.Pun;
 
 public class ProjectileSpreadShell : MonoBehaviour {
 
@@ -8,7 +9,7 @@ public class ProjectileSpreadShell : MonoBehaviour {
     private Vector3 rot;
 
 	// Use this for initialization
-	void Start () {
+	private void Start () {
         rot = transform.localEulerAngles;
 
         if(FindObjectsOfType<Projectile>().Length < 10)

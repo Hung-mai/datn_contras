@@ -7,8 +7,9 @@ public class EnemyDeathEffect : MonoBehaviour {
     private int scale;
 
 	// Use this for initialization
-	void Start () {
-        scale = Mathf.Clamp((int)(FindObjectOfType<PlayerController>().transform.position.x*10000 - transform.position.x * 10000), -1, 1);
+	private void Start ()
+    {
+        scale = Mathf.Clamp((int)(IngameManager.ins.players[0].transform.position.x*10000 - transform.position.x * 10000), -1, 1);
         transform.localScale = new Vector3(scale, 1, 1);
         if(GetComponent<Rigidbody2D>() != null)
         {
@@ -16,8 +17,8 @@ public class EnemyDeathEffect : MonoBehaviour {
         }
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	// // Update is called once per frame
+	// void Update () {
 	
-	}
+	// }
 }

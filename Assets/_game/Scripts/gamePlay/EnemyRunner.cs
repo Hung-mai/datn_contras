@@ -27,12 +27,11 @@ public class EnemyRunner : MonoBehaviour {
     //     myAnimator = GetComponent<Animator>();
 	// }
 
-    void OnBecameVisible()
+    private void OnBecameVisible()
     {
         isActive = true;
     }
 	
-	// Update is called once per frame
 	private void Update()
     {
         if (!isActive) return;

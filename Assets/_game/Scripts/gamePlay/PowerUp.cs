@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Photon.Pun;
 
 public class PowerUp : MonoBehaviour {
 
@@ -13,7 +14,7 @@ public class PowerUp : MonoBehaviour {
     public int type;
     public float height = 6;
 
-    void Start()
+    private void Start()
     {
         GetComponent<Rigidbody2D>().AddRelativeForce(Vector2.up * height, ForceMode2D.Impulse);
         GetComponent<Rigidbody2D>().AddRelativeForce(Vector2.right * 2, ForceMode2D.Impulse);
@@ -21,13 +22,13 @@ public class PowerUp : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "Player" && type != 0)
+        if(other.tag == Constant.TAG_PLAYER && type != 0)
         {
             other.GetComponent<PlayerController>().ChangeWeapon(type);
             Destroy(gameObject);
         }
 
-        if (other.tag == "Player" && type == 0)
+        if (other.tag == Constant.TAG_PLAYER && type == 0)
         {
             if (PlayerController.rapidsPicked < 2) PlayerController.rapidsPicked++;
             Destroy(gameObject);

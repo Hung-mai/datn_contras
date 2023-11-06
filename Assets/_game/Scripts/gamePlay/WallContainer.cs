@@ -10,14 +10,15 @@ public class WallContainer : MonoBehaviour {
     public float range;
 
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    private void Start () {
         anim = GetComponent<Animator>();
 	}
 	
 	// Update is called once per frame
-	void Update () {
-        anim.SetBool("closed", closed);
+	private void Update ()
+    {
+        anim.SetBool(Constant.anim_closed, closed);
         distance = transform.position.x - FindObjectOfType<PlayerController>().transform.position.x;
         closed = distance > range || distance < -range;
         GetComponent<EnemyManager>().invinsible = closed;

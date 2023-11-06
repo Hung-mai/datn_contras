@@ -11,6 +11,7 @@ public class IngameManager : MonoBehaviour
     public List<PlayerController> players = new List<PlayerController>();
     public int numPlayer = 0;
     public SpawnEnemyPoint[] spawnEnemyPoints;
+    public CameraController cameraController;
 
     private void Awake() {
         ins = this;
@@ -18,8 +19,11 @@ public class IngameManager : MonoBehaviour
 
     private void Start()
     {
-        Debug.LogError("PhotonNetwork.IsMasterClient: " + PhotonNetwork.IsMasterClient);
+        
+        // Debug.LogError("PhotonNetwork.IsMasterClient: " + PhotonNetwork.IsMasterClient);
         PlayerController player = PhotonNetwork.Instantiate("Game/" + playerPrefab.name, spawnPoint.position, Quaternion.identity).GetComponent<PlayerController>();
+
+        cameraController.player = player.transform;
         // player.SpawnPoint = spawnPoint.gameObject;
         // player.StartSetup();
         // players.Add(player);

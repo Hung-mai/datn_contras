@@ -14,6 +14,8 @@ public class Constant
     public const string anim_VSP = "VSP";
     public const string anim_Direction = "Direction";
     public const string anim_angle = "Angle";
+    public const string anim_Active = "Active";
+    public const string anim_closed = "closed";
 
     // tag
     public const string TAG_ENEMY = "Enemy";

@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class Boss : MonoBehaviour
 {
-    public GameObject LeftCannon;
-    public GameObject RightCannon;
+    public EnemyManager LeftCannon;
+    public EnemyManager RightCannon;
     public GameObject Target;
     public GameObject Projectile;
     public float ShotDelay;
@@ -13,34 +14,33 @@ public class Boss : MonoBehaviour
     float counterRight;
     public bool isActive;
 
-    // Start is called before the first frame update
-    void Start()
+
+    private void Start()
     {
         counterLeft = ShotDelay;
         counterRight = 0;
     }
 
-    void OnBecameVisible()
+    private void OnBecameVisible()
     {
         isActive = true;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (!isActive) return;
         if (Target == null)
         {
-            if (LeftCannon != null) LeftCannon.GetComponent<EnemyManager>().Die();
-            if (RightCannon != null) RightCannon.GetComponent<EnemyManager>().Die();
-            Destroy(gameObject);
+            if (LeftCannon != null) LeftCannon.Die();
+            if (RightCannon != null) RightCannon.Die();
+            PhotonNetwork.Destroy(gameObject);
         }
 
         if (LeftCannon != null)
         {
             if(counterLeft <= 0)
             {
-                Instantiate(Projectile, LeftCannon.transform.position, LeftCannon.transform.rotation);
+                PhotonNetwork.Instantiate("Enemy/" + Projectile.name, LeftCannon.transform.position, LeftCannon.transform.rotation);
                 counterLeft = ShotDelay + Random.Range(-1, 0);
             }
             else
@@ -52,7 +52,7 @@ public class Boss : MonoBehaviour
         {
             if (counterRight <= 0)
             {
-                Instantiate(Projectile, RightCannon.transform.position, RightCannon.transform.rotation);
+                PhotonNetwork.Instantiate("Enemy/" + Projectile.name, RightCannon.transform.position, RightCannon.transform.rotation);
                 counterRight = ShotDelay + Random.Range(-1, 0);
             }
             else

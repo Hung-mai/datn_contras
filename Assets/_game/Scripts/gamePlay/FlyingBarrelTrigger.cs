@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class FlyingBarrelTrigger : MonoBehaviour {
 
     public GameObject barrel;
 
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player" && barrel != null)
+        if (other.tag == Constant.TAG_PLAYER && barrel != null)
         {
             barrel.GetComponent<FlyingBarrel>().y = transform.position.y;
             barrel.GetComponent<FlyingBarrel>().Activate();
@@ -16,13 +17,14 @@ public class FlyingBarrelTrigger : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start ()
-    {
+    // void Start ()
+    // {
 		
-	}
+	// }
 	
 	// Update is called once per frame
-	void Update () {
-        if (barrel == null) Destroy(gameObject);
+	private void Update ()
+    {
+        if (barrel == null) PhotonNetwork.Destroy(gameObject);
 	}
 }
