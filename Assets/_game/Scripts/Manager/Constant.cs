@@ -4,6 +4,7 @@ public class Constant
     // string
     public const string SCENE_LOADING = "Loading";
     public const string SCENE_LOBBY = "Lobby";
+    public const string nickName = "nickName";
 
     // anim
     public const string anim_OnGround = "OnGround";
