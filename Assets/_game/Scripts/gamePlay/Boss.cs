@@ -34,6 +34,10 @@ public class Boss : MonoBehaviour
             if (LeftCannon != null) LeftCannon.Die();
             if (RightCannon != null) RightCannon.Die();
             PhotonNetwork.Destroy(gameObject);
+
+            // dến đây là thắng, hiển thị win game, win xong thì back ra home
+            IngameManager.ins.obj_panelWin.SetActive(true);
+            IngameManager.ins.win = true;
         }
 
         if (LeftCannon != null)

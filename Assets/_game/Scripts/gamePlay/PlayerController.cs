@@ -4,6 +4,8 @@ using Photon.Pun;
 
 public class PlayerController : MonoBehaviour
 {
+    public Joystick _joystick;
+    public TMPro.TMP_Text txt_name;
     public PhotonView photonView;
     private GameObject currentProjectile;
     public GameObject basicProjectile;
@@ -51,7 +53,7 @@ public class PlayerController : MonoBehaviour
     private bool KeyRight;
     private bool KeyUp;
     private bool KeyDown;
-    private bool KeyJump;
+    public bool KeyJump;
     private bool KeyAction;
     private bool KeyJumpOff;
 
@@ -114,6 +116,8 @@ public class PlayerController : MonoBehaviour
     // Смерть
     public void Death()
     {
+        if(IngameManager.ins.win) return;
+        
         if(photonView.IsMine)
         {
             if (KeyDown && onWater) return;
@@ -214,13 +218,28 @@ public class PlayerController : MonoBehaviour
 
     private void GetInput()
     {
-        KeyLeft = Input.GetKey(KeyCode.LeftArrow);
-        KeyRight = Input.GetKey(KeyCode.RightArrow);
-        KeyUp = Input.GetKey(KeyCode.UpArrow);
-        KeyDown = Input.GetKey(KeyCode.DownArrow);
-        KeyJump = Input.GetKeyDown(KeyCode.Space);
-        KeyAction = Input.GetKey(KeyCode.E);
-        KeyJumpOff = KeyDown && KeyJump;
+        #if UNITY_EDITOR
+            KeyLeft = Input.GetKey(KeyCode.LeftArrow);
+            KeyRight = Input.GetKey(KeyCode.RightArrow);
+            KeyUp = Input.GetKey(KeyCode.UpArrow);
+            KeyDown = Input.GetKey(KeyCode.DownArrow);
+            KeyJump = Input.GetKeyDown(KeyCode.Space);
+            KeyAction = Input.GetKey(KeyCode.E);
+            KeyJumpOff = KeyDown && KeyJump;
+
+
+        #else
+            KeyLeft = _joystick.Horizontal < 0 && (Mathf.Abs(_joystick.Horizontal) > 0.5f * Mathf.Abs(_joystick.Vertical));
+            KeyRight = _joystick.Horizontal > 0 && (Mathf.Abs(_joystick.Horizontal) > 0.5f * Mathf.Abs(_joystick.Vertical));
+            KeyUp = _joystick.Vertical > 0 && (Mathf.Abs(_joystick.Vertical) > 0.5f * Mathf.Abs(_joystick.Horizontal));
+            KeyDown = _joystick.Vertical < 0 && (Mathf.Abs(_joystick.Vertical) > 0.5f * Mathf.Abs(_joystick.Horizontal));
+            // KeyJump = Input.GetKeyDown(KeyCode.Space);
+            KeyAction = true;
+            KeyJumpOff = KeyDown && KeyJump;
+            
+        #endif
+        
+        
     }
 
     private void Move()
@@ -321,6 +340,17 @@ public class PlayerController : MonoBehaviour
 
         transform.position = new Vector2(transform.position.x + hsp, transform.position.y + vsp);
     }
+
+    // public void PlayerJump()
+    // {
+    //     if (KeyJump && onGround)
+    //     {
+    //         jumped = true;
+    //         if(!onWater) vsp = jumpHeight * 0.6f;
+    //         else vsp = jumpHeight* 0.6f;
+    //         onGround = false;
+    //     }
+    // }
 
     // Стрельба
     private void Shoot()
