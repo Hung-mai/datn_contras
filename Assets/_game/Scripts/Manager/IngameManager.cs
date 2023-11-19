@@ -21,7 +21,15 @@ public class IngameManager : MonoBehaviour
     {
         
         // Debug.LogError("PhotonNetwork.IsMasterClient: " + PhotonNetwork.IsMasterClient);
-        PlayerController player = PhotonNetwork.Instantiate("Game/" + playerPrefab.name, spawnPoint.position, Quaternion.identity).GetComponent<PlayerController>();
+        PlayerController player;
+        if(PhotonNetwork.IsMasterClient)
+        {
+            player = PhotonNetwork.Instantiate("Game/Player", spawnPoint.position, Quaternion.identity).GetComponent<PlayerController>();
+        }
+        else
+        {
+            player = PhotonNetwork.Instantiate("Game/Player 2", spawnPoint.position, Quaternion.identity).GetComponent<PlayerController>();
+        }
 
         cameraController.player = player.transform;
         // player.SpawnPoint = spawnPoint.gameObject;
