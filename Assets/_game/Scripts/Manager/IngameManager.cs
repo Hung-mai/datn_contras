@@ -29,7 +29,7 @@ public class IngameManager : MonoBehaviourPunCallbacks
         // Debug.LogError("PhotonNetwork.IsMasterClient: " + PhotonNetwork.IsMasterClient);
         if(PhotonNetwork.IsMasterClient)
         {
-            player = PhotonNetwork.Instantiate("Game/Player2", spawnPoint.position, Quaternion.identity).GetComponent<PlayerController>();
+            player = PhotonNetwork.Instantiate("Game/Player", spawnPoint.position, Quaternion.identity).GetComponent<PlayerController>();
         }
         else
         {

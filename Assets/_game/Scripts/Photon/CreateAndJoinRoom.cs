@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class CreateAndJoinRoom : MonoBehaviourPunCallbacks
 {
+    public GameObject obj_loading;
     public TMP_Text txt_nickName;
     public TMP_InputField createInput;
     public TMP_InputField joinInput;
@@ -31,6 +32,7 @@ public class CreateAndJoinRoom : MonoBehaviourPunCallbacks
 
     public void Btn_CreateRoom()
     {
+        obj_loading.SetActive(true);
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 2;
         isPlayingAlone = false;
@@ -39,12 +41,14 @@ public class CreateAndJoinRoom : MonoBehaviourPunCallbacks
 
     public void Btn_JoinRoom()
     {
+        obj_loading.SetActive(true);
         isPlayingAlone = false;
         PhotonNetwork.JoinRoom(inputJoinRoom.text);
     }
 
     public void Btn_startGame()
     {
+        obj_loading.SetActive(true);
         PhotonNetwork.LoadLevel("Level_1");
     }
 
@@ -52,12 +56,14 @@ public class CreateAndJoinRoom : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
+        
         if(isPlayingAlone)
         {
             PhotonNetwork.LoadLevel("Level_1");
         }
         else
         {
+            obj_loading.SetActive(false);
             obj_room.SetActive(true);
             txt_roomId.text = "room: " + PhotonNetwork.CurrentRoom.Name;
 
@@ -105,6 +111,7 @@ public class CreateAndJoinRoom : MonoBehaviourPunCallbacks
     // button, 
     public void Btn_playAlone()
     {
+        obj_loading.SetActive(true);
         isPlayingAlone = true;
         PhotonNetwork.CreateRoom(Random.Range(10000,99999).ToString());
         // SceneManager.LoadScene("Level_1");
@@ -173,7 +180,16 @@ public class CreateAndJoinRoom : MonoBehaviourPunCallbacks
     public void Btn_closeRoom()
     {
         PhotonNetwork.LeaveRoom();
-        obj_room.SetActive(false);
+        obj_loading.SetActive(true);
+    }
+
+    public override void OnLeftRoom()
+    {
+        Timer.Schedule(this, 2, ()=> {
+
+            obj_loading.SetActive(false);
+            obj_room.SetActive(false);
+        });
     }
 
 }

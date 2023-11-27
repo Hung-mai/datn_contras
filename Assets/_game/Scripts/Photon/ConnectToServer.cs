@@ -18,7 +18,7 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
     private IEnumerator Start()
     {
         
-        Application.targetFrameRate = 240;
+        Application.targetFrameRate = 60;
         PhotonNetwork.AutomaticallySyncScene = true;
 
         if(PlayerPrefs.HasKey(Constant.nickName) == false)
