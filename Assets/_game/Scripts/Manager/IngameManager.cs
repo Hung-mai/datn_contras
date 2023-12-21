@@ -14,9 +14,13 @@ public class IngameManager : MonoBehaviourPunCallbacks
     public SpawnEnemyPoint[] spawnEnemyPoints;
     public CameraController cameraController;
     public Joystick joystick;
-    PlayerController player;
+    public PlayerController player;
     public GameObject obj_panelWin;
+    public GameObject obj_panelLose;
     public bool win = false;
+    public bool lose = false;
+    public GameObject[] hearts;
+    
     
 
     private void Awake() {
@@ -76,5 +80,49 @@ public class IngameManager : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         SceneManager.LoadScene(Constant.SCENE_LOBBY);
+    }
+
+    public void WinGame()
+    {
+        win = true;
+        obj_panelWin.SetActive(true);
+        SoundManager.PlayEfxSound(SoundManager.ins.win);
+    }
+
+    public void ChetMotMang()
+    {
+        SoundManager.PlayEfxSound(SoundManager.ins.playerDie);
+        player.mang--;
+        hearts[player.mang].SetActive(false);
+
+        if(player.mang == 0)
+        {
+            lose = true;
+
+            PlayerController[] players = FindObjectsOfType<PlayerController>();
+            for (int i = 0; i < players.Length; i++)
+            {
+                if(players[i].mang > 0)
+                {
+                    // cho camera theo dõi player còn lại
+                    // cameraController.player = players[i].transform;
+                    StartCoroutine(ie_wait2s(players[i].transform));
+                    return;
+                }
+            }
+
+            // qua đc đây thì thua r
+            SoundManager.PlayEfxSound(SoundManager.ins.lose);
+
+            Timer.Schedule(this, 2, () => {
+                obj_panelLose.SetActive(true);
+            });
+        }
+    }
+
+    private IEnumerator ie_wait2s(Transform _tf)
+    {
+        yield return Cache.GetWFS(2);
+        cameraController.player = _tf;
     }
 }

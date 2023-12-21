@@ -12,6 +12,7 @@ public class KillPlayerOnContact : MonoBehaviour {
         if (other.tag == Constant.TAG_PLAYER)
         {
             PlayerController pController = other.GetComponent<PlayerController>();
+            
             if(KillRegardless) pController.invincCounter = -1;
             pController.Death();
             if (killSelf) PhotonNetwork.Destroy(gameObject);

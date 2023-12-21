@@ -36,8 +36,11 @@ public class Boss : MonoBehaviour
             PhotonNetwork.Destroy(gameObject);
 
             // dến đây là thắng, hiển thị win game, win xong thì back ra home
-            IngameManager.ins.obj_panelWin.SetActive(true);
+            SoundManager.PlayEfxSound(SoundManager.ins.bossDefeat);
             IngameManager.ins.win = true;
+            Timer.Schedule(IngameManager.ins, 2, () => {
+                IngameManager.ins.WinGame();
+            });
         }
 
         if (LeftCannon != null)

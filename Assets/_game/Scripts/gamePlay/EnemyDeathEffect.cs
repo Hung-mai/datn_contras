@@ -15,6 +15,8 @@ public class EnemyDeathEffect : MonoBehaviour {
         {
             GetComponent<Rigidbody2D>().velocity = new Vector2(-scale*3, height);
         }
+
+        SoundManager.PlayEfxSound(SoundManager.ins.enemyHit);
 	}
 	
 	// // Update is called once per frame

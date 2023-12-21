@@ -4,6 +4,7 @@ using Photon.Pun;
 
 public class PlayerController : MonoBehaviour
 {
+    public int mang = 6;
     public Joystick _joystick;
     public TMPro.TMP_Text txt_name;
     public PhotonView photonView;
@@ -13,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public GameObject ProjectileF;
     public GameObject ProjectileS;
     public GameObject ProjectileL;
+    public AudioSource gun;
 
 
     public BoxCollider2D myColl;
@@ -122,6 +124,12 @@ public class PlayerController : MonoBehaviour
         {
             if (KeyDown && onWater) return;
             if (invincCounter > 0) return;
+
+            if(IngameManager.ins.player == this)
+            {
+                IngameManager.ins.ChetMotMang();
+            }
+
             PhotonNetwork.Instantiate("Game/" + DeathEffect.name, transform.position, transform.rotation);
             transform.position = SpawnPoint.transform.position;        
             isDead = true;
@@ -132,6 +140,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if(IngameManager.ins.win || IngameManager.ins.lose) return;
         if (!isActive)
         {
             inactCounter -= Time.deltaTime;
@@ -386,6 +395,7 @@ public class PlayerController : MonoBehaviour
 
     private void SpawnBullet()
     {
+        gun.Play();
         PhotonNetwork.Instantiate("Game/" + basicProjectile.name, currentShootPoint.position, rot);
     }
 
